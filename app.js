@@ -203,4 +203,24 @@ app.get("/user/followers/",authenticateToken,async(request,response)=>{
     response.send(userFollowers.map((obj) => camelToSnakeCase1(obj)));
 
 });
+
+//API 10
+app.post("/user/tweets/",authenticateToken,async(request,response)=>{
+  const {tweet} = request.body;
+      const {username} = request;
+    console.log(username);
+    const userIdQuery = `SELECT user_id FROM
+    user WHERE username = '${username}'`;
+    const {user_id} = await dbObj.get(userIdQuery);
+  const addTweetQuery = `INSERT INTO tweet (tweet,user_id)
+    
+   VALUES('${tweet}',${user_id});`;
+  //console.log(addDistrictQuery);
+
+  await dbObj.run(addTweetQuery);
+  response.send("Created a Tweet");
+
+});
+
+
 module.exports = app;
