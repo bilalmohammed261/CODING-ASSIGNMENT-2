@@ -204,6 +204,21 @@ app.get("/user/followers/",authenticateToken,async(request,response)=>{
 
 });
 
+//API 9
+app.get("/user/tweets/",authenticateToken,async(request,response)=>{
+   const {username} = request;
+   console.log(username);
+   
+    const getUserTweetsQuery = `SELECT 
+    user.username, tweet.tweet FROM user
+    INNER JOIN tweet ON user.user_id = tweet.user_id
+    WHERE user.username = '${username}';`;
+    console.log(getUserTweetsQuery);
+    
+    const userTweets = await dbObj.all(getUserTweetsQuery);
+    response.send(userTweets);
+});
+
 //API 10
 app.post("/user/tweets/",authenticateToken,async(request,response)=>{
   const {tweet} = request.body;
