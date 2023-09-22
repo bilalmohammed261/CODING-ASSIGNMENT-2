@@ -223,4 +223,29 @@ app.post("/user/tweets/", authenticateToken, async (request, response) => {
   response.send("Created a Tweet");
 });
 
+//API 11
+app.delete("/tweets/:tweetId/",authenticateToken, async (request, response) => {
+ console.log(request.params);
+ 
+    const { tweetId } = request.params;
+  //console.log(tweet_id);
+  
+  const { username } = request;
+  console.log(username);
+  const userIdQuery = `SELECT user_id FROM
+    user WHERE username = '${username}'`;
+  const { user_id } = await dbObj.get(userIdQuery);
+  const deleteTweetQuery = `DELETE FROM tweet 
+    WHERE tweet_id = ${tweetId} AND user_id = ${user_id};`;
+  const dBResult =  await dbObj.run(deleteTweetQuery);
+  if(dBResult===undefined){
+    
+    response.status(401);
+    response.send("Invalid Request");
+  }
+  else{
+     response.send("Tweet Removed"); 
+  }
+});
+
 module.exports = app;
