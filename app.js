@@ -188,6 +188,63 @@ app.get("/user/followers/", authenticateToken, async (request, response) => {
   response.send(userFollowers.map((obj) => camelToSnakeCase1(obj)));
 });
 
+//API 6
+app.get("/tweets/:tweetId/", authenticateToken, async (request, response)=>{
+    const { username } = request;
+    const { tweetId } = request.params;
+   // console.log(tweetId);
+    
+    const userIdQuery = `SELECT user_id FROM
+    user WHERE username = '${username}';`;
+    const { user_id } = await dbObj.get(userIdQuery);
+    const tweetIdQuery = `SELECT user_id FROM
+    tweet WHERE tweet_id = ${tweetId};`
+    ;
+    const dBResult = await dbObj.get(tweetIdQuery);
+    const tweet_user_id = dBResult.user_id;
+   // console.log(tweet_user_id);
+    
+    
+});
+
+//API 7
+app.get("/tweets/:tweetId/likes/", authenticateToken, async (request, response)=>{
+    const { username } = request;
+    const { tweetId } = request.params;
+   // console.log(tweetId);
+    
+    const userIdQuery = `SELECT user_id FROM
+    user WHERE username = '${username}';`;
+    const { user_id } = await dbObj.get(userIdQuery);
+    const tweetIdQuery = `SELECT user_id FROM
+    tweet WHERE tweet_id = ${tweetId};`
+    ;
+    const dBResult = await dbObj.get(tweetIdQuery);
+    const tweet_user_id = dBResult.user_id;
+   // console.log(tweet_user_id);
+    
+    
+});
+
+//API 8
+app.get("/tweets/:tweetId/replies/", authenticateToken, async (request, response)=>{
+    const { username } = request;
+    const { tweetId } = request.params;
+   // console.log(tweetId);
+    
+    const userIdQuery = `SELECT user_id FROM
+    user WHERE username = '${username}';`;
+    const { user_id } = await dbObj.get(userIdQuery);
+    const tweetIdQuery = `SELECT user_id FROM
+    tweet WHERE tweet_id = ${tweetId};`
+    ;
+    const dBResult = await dbObj.get(tweetIdQuery);
+    const tweet_user_id = dBResult.user_id;
+   // console.log(tweet_user_id);
+    
+    
+});
+
 //API 9
 app.get("/user/tweets/", authenticateToken, async (request, response) => {
   const { username } = request;
@@ -202,9 +259,12 @@ app.get("/user/tweets/", authenticateToken, async (request, response) => {
     LEFT JOIN like ON tweet.tweet_id = like.tweet_id
     LEFT JOIN reply ON tweet.tweet_id = reply.tweet_id
     WHERE user.username = '${username}'
-    GROUP BY tweet.tweet_id,;
+    GROUP BY tweet.tweet_id;
 `;
+const userTweets = await dbObj.all(getUserTweetsQuery);
+response.send(userTweets);
 });
+
 
 //API 10
 app.post("/user/tweets/", authenticateToken, async (request, response) => {
@@ -225,20 +285,22 @@ app.post("/user/tweets/", authenticateToken, async (request, response) => {
 
 //API 11
 app.delete("/tweets/:tweetId/",authenticateToken, async (request, response) => {
- console.log(request.params);
+ //console.log(request.params);
  
     const { tweetId } = request.params;
   //console.log(tweet_id);
   
   const { username } = request;
-  console.log(username);
+  //console.log(username);
   const userIdQuery = `SELECT user_id FROM
     user WHERE username = '${username}'`;
   const { user_id } = await dbObj.get(userIdQuery);
   const deleteTweetQuery = `DELETE FROM tweet 
     WHERE tweet_id = ${tweetId} AND user_id = ${user_id};`;
   const dBResult =  await dbObj.run(deleteTweetQuery);
-  if(dBResult===undefined){
+  //console.log(dBResult);
+  
+  if(dBResult.changes === 0){
     
     response.status(401);
     response.send("Invalid Request");
